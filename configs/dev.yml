@@ -1,0 +1,6 @@
+DB:
+  ADDRESS: 127.0.0.1
+  PORT: 5432
+  USERNAME: postgres_user
+  PASSWORD: p@ss
+  DATABASE: backend_db
