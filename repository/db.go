@@ -17,7 +17,8 @@ var DB *gorm.DB
 var err error
 
 var (
-	User = NewUserRepository()
+	
+	Company = NewCompanyRepository()
 )
 func Connect() (*gorm.DB, error) {
 	//Connect to db using GORM
@@ -48,6 +49,8 @@ func Connect() (*gorm.DB, error) {
 	
 	//Migrate repository structure into the db
 	err = DB.AutoMigrate(&models.User{})
+	err = DB.AutoMigrate(&models.Company{})
+	err = DB.AutoMigrate(&models.CompanyCategory{})
 	if err != nil {
 		return nil, err
 	}

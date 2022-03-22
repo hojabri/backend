@@ -1,8 +1,8 @@
 package models
 
 type Response struct {
-	Code    int
-	Body    interface{}
-	Title   string
-	Message string
+	Code    int         `json:"code,omitempty"`
+	Body    interface{} `json:"body,omitempty"`
+	Title   string      `json:"title,omitempty"`
+	Message string      `json:"message,omitempty"`
 }

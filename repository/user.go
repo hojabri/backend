@@ -3,18 +3,19 @@ package repository
 import (
 	"fmt"
 	"github.com/hojabri/backend/models"
+	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
 )
 
 type UserRepository interface {
-	Save(user models.User) (int, error)
+	Save(user models.User) (uint, error)
 	Update(models.User) error
 	Delete(models.User) error
 	FindAll() []*models.User
-	FindByID(userID int) (*models.User, error)
-	DeleteByID(userID int) error
+	FindByID(userID uint) (*models.User, error)
+	DeleteByID(userID uint) error
 	FindByName(name string) (*models.User, error)
 	FindByField(fieldName, fieldValue string) (*models.User, error)
 	UpdateSingleField(user models.User, fieldName, fieldValue string) error
@@ -25,21 +26,24 @@ type userDatabase struct {
 
 func NewUserRepository() UserRepository {
 	if DB == nil {
-		Connect()
+		_, err = Connect()
+		if err != nil {
+			log.Error(err)
+		}
 	}
 	return &userDatabase{
 		connection: DB,
 	}
 }
 
-func (db userDatabase) DeleteByID(userID int) error {
+func (db userDatabase) DeleteByID(userID uint) error {
 	user := models.User{}
 	user.ID = userID
 	result := db.connection.Delete(&user)
 	return result.Error
 }
 
-func (db userDatabase) Save(user models.User) (int, error) {
+func (db userDatabase) Save(user models.User) (uint, error) {
 	result := db.connection.Create(&user)
 	if result.Error != nil {
 		return 0, result.Error
@@ -63,7 +67,7 @@ func (db userDatabase) FindAll() []*models.User {
 	return users
 }
 
-func (db userDatabase) FindByID(userID int) (*models.User, error) {
+func (db userDatabase) FindByID(userID uint) (*models.User, error) {
 	var user models.User
 	result := db.connection.Preload(clause.Associations).Find(&user, "id = ?", userID)
 	

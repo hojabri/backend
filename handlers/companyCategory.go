@@ -9,28 +9,28 @@ import (
 	"strconv"
 )
 
-var userRepository repository.UserRepository
+var companyCategoryRepository repository.CompanyCategoryRepository
 
 func init() {
-	userRepository = repository.NewUserRepository()
+	companyCategoryRepository = repository.NewCompanyCategoryRepository()
 }
 
-// GetAllUsers gets all repository information
-func GetAllUsers(c *fiber.Ctx) error {
-	users := userRepository.FindAll()
+// GetAllCompanyCategories gets all repository information
+func GetAllCompanyCategories(c *fiber.Ctx) error {
+	companyCategories := companyCategoryRepository.FindAll()
 	
 	resp := models.Response{
 		Code:    http.StatusOK,
-		Body:    users,
-		Title:   "GetAllUsers",
-		Message: "All users",
+		Body:    companyCategories,
+		Title:   "GetAllCompanyCategories",
+		Message: "All CompanyCategories",
 	}
 	
 	return c.Status(resp.Code).JSON(resp)
 }
 
-// GetSingleUser Gets single user information
-func GetSingleUser(c *fiber.Ctx) error {
+// GetSingleCompanyCategory Gets single companyCategory information
+func GetSingleCompanyCategory(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 0)
 	
 	if err != nil {
@@ -38,30 +38,30 @@ func GetSingleUser(c *fiber.Ctx) error {
 			Code:    http.StatusNotAcceptable,
 			Body:    err.Error(),
 			Title:   "NotAcceptable",
-			Message: "Error in getting user information",
+			Message: "Error in getting companyCategory information",
 		}
 		
 		return c.Status(errorResp.Code).JSON(errorResp)
 	}
 	
-	user, err := userRepository.FindByID(uint(id))
+	companyCategory, err := companyCategoryRepository.FindByID(uint(id))
 	if err != nil {
 		errorResp := models.Response{
 			Code:    http.StatusNotFound,
 			Body:    err.Error(),
 			Title:   "NotFound",
-			Message: "Error in getting user information",
+			Message: "Error in getting companyCategory information",
 		}
 		
 		return c.Status(errorResp.Code).JSON(errorResp)
 	}
 	
-	if user == nil {
+	if companyCategory == nil {
 		errorResp := models.Response{
 			Code:    http.StatusNotFound,
-			Body:    fmt.Sprintf("user with id %d could not be found", id),
+			Body:    fmt.Sprintf("companyCategory with id %d could not be found", id),
 			Title:   "NotFound",
-			Message: "Error in finding user",
+			Message: "Error in finding companyCategory",
 		}
 		
 		return c.Status(errorResp.Code).JSON(errorResp)
@@ -69,60 +69,60 @@ func GetSingleUser(c *fiber.Ctx) error {
 	
 	resp := models.Response{
 		Code:    http.StatusOK,
-		Body:    user,
+		Body:    companyCategory,
 		Title:   "OK",
-		Message: "User information",
+		Message: "CompanyCategory information",
 	}
 	return c.Status(resp.Code).JSON(resp)
 	
 }
 
-// AddNewUser adds new user
-func AddNewUser(c *fiber.Ctx) error {
-	user := &models.User{}
+// AddNewCompanyCategory adds new companyCategory
+func AddNewCompanyCategory(c *fiber.Ctx) error {
+	companyCategory := &models.CompanyCategory{}
 	
-	err := c.BodyParser(user)
+	err := c.BodyParser(companyCategory)
 	
 	if err != nil {
 		errorResp := models.Response{
 			Code:    http.StatusNotAcceptable,
 			Body:    err.Error(),
 			Title:   "Error",
-			Message: "Error in parsing user body information",
+			Message: "Error in parsing companyCategory body information",
 		}
 		
 		return c.Status(errorResp.Code).JSON(errorResp)
 	}
 	
-	id, err := userRepository.Save(*user)
+	id, err := companyCategoryRepository.Save(*companyCategory)
 	if err != nil {
 		errorResp := models.Response{
 			Code:    http.StatusInternalServerError,
 			Body:    err.Error(),
 			Title:   "InternalServerError",
-			Message: "Error in adding new user",
+			Message: "Error in adding new companyCategory",
 		}
 		
 		return c.Status(errorResp.Code).JSON(errorResp)
 	}
 	
-	user, err = userRepository.FindByID(id)
+	companyCategory, err = companyCategoryRepository.FindByID(id)
 	if err != nil {
 		errorResp := models.Response{
 			Code:    http.StatusInternalServerError,
 			Body:    err.Error(),
 			Title:   "InternalServerError",
-			Message: "Error in finding newly added user",
+			Message: "Error in finding newly added companyCategory",
 		}
 		
 		return c.Status(errorResp.Code).JSON(errorResp)
 	}
-	if user == nil {
+	if companyCategory == nil {
 		errorResp := models.Response{
 			Code:    http.StatusNotFound,
-			Body:    fmt.Sprintf("user with id %d could not be found", id),
+			Body:    fmt.Sprintf("companyCategory with id %d could not be found", id),
 			Title:   "NotFound",
-			Message: "Error in finding user",
+			Message: "Error in finding companyCategory",
 		}
 		
 		return c.Status(errorResp.Code).JSON(errorResp)
@@ -130,25 +130,25 @@ func AddNewUser(c *fiber.Ctx) error {
 	
 	resp := models.Response{
 		Code:    http.StatusOK,
-		Body:    user,
+		Body:    companyCategory,
 		Title:   "OK",
-		Message: "new user added successfully",
+		Message: "new companyCategory added successfully",
 	}
 	return c.Status(resp.Code).JSON(resp)
 	
 }
 
-// UpdateUser updates a user by user id
-func UpdateUser(c *fiber.Ctx) error {
-	user := &models.User{}
+// UpdateCompanyCategory updates a companyCategory by companyCategory id
+func UpdateCompanyCategory(c *fiber.Ctx) error {
+	companyCategory := &models.CompanyCategory{}
 	
-	err := c.BodyParser(user)
+	err := c.BodyParser(companyCategory)
 	if err != nil {
 		errorResp := models.Response{
 			Code:    http.StatusNotAcceptable,
 			Body:    err.Error(),
 			Title:   "NotAcceptable",
-			Message: "Error in parsing user body information",
+			Message: "Error in parsing companyCategory body information",
 		}
 		
 		return c.Status(errorResp.Code).JSON(errorResp)
@@ -160,67 +160,67 @@ func UpdateUser(c *fiber.Ctx) error {
 			Code:    http.StatusNotAcceptable,
 			Body:    err.Error(),
 			Title:   "NotAcceptable",
-			Message: "Error in parsing user ID. (it should be an integer)",
+			Message: "Error in parsing companyCategory ID. (it should be an integer)",
 		}
 		
 		return c.Status(errorResp.Code).JSON(errorResp)
 	}
 	
-	updatingUser, err := userRepository.FindByID(uint(id))
+	updatingCompanyCategory, err := companyCategoryRepository.FindByID(uint(id))
 	if err != nil {
 		errorResp := models.Response{
 			Code:    http.StatusNotFound,
 			Body:    err.Error(),
 			Title:   "NotFound",
-			Message: "Error in getting user information",
+			Message: "Error in getting companyCategory information",
 		}
 		
 		return c.Status(errorResp.Code).JSON(errorResp)
 	}
 	
-	if updatingUser == nil {
+	if updatingCompanyCategory == nil {
 		errorResp := models.Response{
 			Code:    http.StatusNotFound,
-			Body:    fmt.Sprintf("user with id %d could not be found", id),
+			Body:    fmt.Sprintf("companyCategory with id %d could not be found", id),
 			Title:   "NotFound",
-			Message: "Error in finding user",
+			Message: "Error in finding companyCategory",
 		}
 		
 		return c.Status(errorResp.Code).JSON(errorResp)
 	}
 	
-	user.ID = uint(id)
+	companyCategory.ID = uint(id)
 	
-	err = userRepository.Update(*user)
-	if err != nil {
-		errorResp := models.Response{
-			Code:    http.StatusInternalServerError,
-			Body:    err.Error(),
-			Title:   "InternalServerError",
-			Message: "Error in updating user information",
-		}
-		
-		return c.Status(errorResp.Code).JSON(errorResp)
-	}
-	
-	user, err = userRepository.FindByID(uint(id))
+	err = companyCategoryRepository.Update(*companyCategory)
 	if err != nil {
 		errorResp := models.Response{
 			Code:    http.StatusInternalServerError,
 			Body:    err.Error(),
 			Title:   "InternalServerError",
-			Message: "Error in finding newly updated user",
+			Message: "Error in updating companyCategory information",
 		}
 		
 		return c.Status(errorResp.Code).JSON(errorResp)
 	}
 	
-	if user == nil {
+	companyCategory, err = companyCategoryRepository.FindByID(uint(id))
+	if err != nil {
+		errorResp := models.Response{
+			Code:    http.StatusInternalServerError,
+			Body:    err.Error(),
+			Title:   "InternalServerError",
+			Message: "Error in finding newly updated companyCategory",
+		}
+		
+		return c.Status(errorResp.Code).JSON(errorResp)
+	}
+	
+	if companyCategory == nil {
 		errorResp := models.Response{
 			Code:    http.StatusNotFound,
-			Body:    fmt.Sprintf("user with id %d could not be found", id),
+			Body:    fmt.Sprintf("companyCategory with id %d could not be found", id),
 			Title:   "NotFound",
-			Message: "Error in finding user",
+			Message: "Error in finding companyCategory",
 		}
 		
 		return c.Status(errorResp.Code).JSON(errorResp)
@@ -228,15 +228,15 @@ func UpdateUser(c *fiber.Ctx) error {
 	
 	resp := models.Response{
 		Code:    http.StatusOK,
-		Body:    user,
-		Title:   "UpdateUser",
-		Message: "user updated successfully",
+		Body:    companyCategory,
+		Title:   "UpdateCompanyCategory",
+		Message: "companyCategory updated successfully",
 	}
 	return c.Status(resp.Code).JSON(resp)
 }
 
-// DeleteUser deletes the user from db
-func DeleteUser(c *fiber.Ctx) error {
+// DeleteCompanyCategory deletes the companyCategory from db
+func DeleteCompanyCategory(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 0)
 	
 	if err != nil {
@@ -244,42 +244,42 @@ func DeleteUser(c *fiber.Ctx) error {
 			Code:    http.StatusNotAcceptable,
 			Body:    err.Error(),
 			Title:   "Error",
-			Message: "Error in getting user information",
+			Message: "Error in getting companyCategory information",
 		}
 		
 		return c.Status(errorResp.Code).JSON(errorResp)
 	}
 	
-	user, err := userRepository.FindByID(uint(id))
+	companyCategory, err := companyCategoryRepository.FindByID(uint(id))
 	if err != nil {
 		errorResp := models.Response{
 			Code:    http.StatusInternalServerError,
 			Body:    err.Error(),
 			Title:   "InternalServerError",
-			Message: "Error in finding user",
+			Message: "Error in finding companyCategory",
 		}
 		
 		return c.Status(errorResp.Code).JSON(errorResp)
 	}
 	
-	if user == nil {
+	if companyCategory == nil {
 		errorResp := models.Response{
 			Code:    http.StatusNotFound,
-			Body:    fmt.Sprintf("user with id %d could not be found", id),
+			Body:    fmt.Sprintf("companyCategory with id %d could not be found", id),
 			Title:   "NotFound",
-			Message: "Error in finding user",
+			Message: "Error in finding companyCategory",
 		}
 		
 		return c.Status(errorResp.Code).JSON(errorResp)
 	}
 	
-	err = userRepository.Delete(*user)
+	err = companyCategoryRepository.Delete(*companyCategory)
 	if err != nil {
 		errorResp := models.Response{
 			Code:    http.StatusNotAcceptable,
 			Body:    err.Error(),
 			Title:   "NotAcceptable",
-			Message: "Error in deleting user object",
+			Message: "Error in deleting companyCategory object",
 		}
 		
 		return c.Status(errorResp.Code).JSON(errorResp)
@@ -287,9 +287,9 @@ func DeleteUser(c *fiber.Ctx) error {
 	
 	resp := models.Response{
 		Code:    http.StatusOK,
-		Body:    "user deleted successfully",
+		Body:    "companyCategory deleted successfully",
 		Title:   "OK",
-		Message: "user deleted successfully",
+		Message: "companyCategory deleted successfully",
 	}
 	return c.Status(resp.Code).JSON(resp)
 }
